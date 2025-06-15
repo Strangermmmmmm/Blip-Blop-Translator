@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlipBlop Translator</title>
+    <style>
+        body {
+            background-color: #111;
+            color: #00ff88;
+            font-family: monospace;
+            text-align: center;
+            padding: 20px;
+        }
+        textarea {
+            width: 80%;
+            height: 100px;
+            background-color: #222;
+            color: #00ff88;
+            border: 2px solid #00ff88;
+            padding: 10px;
+            resize: none;
+            margin: 10px;
+        }
+        button {
+            background-color: #00ff88;
+            color: #111;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #00ffaa;
+        }
+        h2 {
+            color: #00ffaa;
+        }
+
+        /* ESTILO DO CANTINHO */
+        .cantinho {
+            position: fixed;
+            bottom: 5px;
+            right: 10px;
+            font-size: 12px;
+            color: #555;
+            opacity: 0.5;
+            user-select: none;
+        }
+        .cantinho:hover {
+            opacity: 1;
+            color: #00ff88;
+            cursor: default;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tradutor BlipBlopiano 🔊</h1>
+    <p>Transforme texto em BlipBlop e BlipBlop em texto!</p>
+
+    <h2>Texto → BlipBlop</h2>
+    <textarea id="textoNormal" placeholder="Digite aqui o texto normal..."></textarea><br>
+    <button onclick="traduzir()">Traduzir para BlipBlop 🔊</button>
+    <textarea id="blipblopSaida" readonly placeholder="Aqui sai o BlipBlop..."></textarea>
+
+    <h2>BlipBlop → Texto</h2>
+    <textarea id="blipblopEntrada" placeholder="Cole aqui o código BlipBlop..."></textarea><br>
+    <button onclick="destraduzir()">Destraduzir para Texto 🔉</button>
+    <textarea id="textoSaida" readonly placeholder="Aqui sai o texto normal..."></textarea>
+
+    <div class="cantinho">Tudo pelo SAT & Chat GPT</div>
+
+    <script>
+        const tabela = {
+            A: 'blip blop',
+            B: 'blop blip blip blip',
+            C: 'blop blip blop blip',
+            D: 'blop blip blip',
+            E: 'blip',
+            F: 'blip blip blop blip',
+            G: 'blop blop blip',
+            H: 'blip blip blip blip',
+            I: 'blip blip',
+            J: 'blip blop blop blop',
+            K: 'blop blip blop',
+            L: 'blip blop blip blip',
+            M: 'blop blop',
+            N: 'blop blip',
+            O: 'blop blop blop',
+            P: 'blip blop blop blip',
+            Q: 'blop blop blip blop',
+            R: 'blip blop blip',
+            S: 'blip blip blip',
+            T: 'blop',
+            U: 'blip blip blop',
+            V: 'blip blip blip blop',
+            W: 'blip blop blop',
+            X: 'blop blip blip blop',
+            Y: 'blop blip blop blop',
+            Z: 'blop blop blip blip',
+            '1': 'blip blop blop blop blop',
+            '2': 'blip blip blop blop blop',
+            '3': 'blip blip blip blop blop',
+            '4': 'blip blip blip blip blop',
+            '5': 'blip blip blip blip blip',
+            '6': 'blop blip blip blip blip',
+            '7': 'blop blop blip blip blip',
+            '8': 'blop blop blop blip blip',
+            '9': 'blop blop blop blop blip',
+            '0': 'blop blop blop blop blop',
+        };
+
+        const tabelaInvertida = {};
+        for (let chave in tabela) {
+            tabelaInvertida[tabela[chave]] = chave;
+        }
+
+        function traduzir() {
+            const texto = document.getElementById('textoNormal').value.toUpperCase();
+            let resultado = '';
+
+            for (let char of texto) {
+                if (char === ' ') {
+                    resultado += '/ ';
+                } else if (tabela[char]) {
+                    resultado += tabela[char] + ' | ';
+                } else {
+                    resultado += '[?] ';
+                }
+            }
+
+            document.getElementById('blipblopSaida').value = resultado.trim();
+        }
+
+        function destraduzir() {
+            const entrada = document.getElementById('blipblopEntrada').value.trim();
+            const palavras = entrada.split('/').map(p => p.trim());
+            let resultado = '';
+
+            for (let palavra of palavras) {
+                const letras = palavra.split('|').map(l => l.trim()).filter(l => l);
+                for (let codigo of letras) {
+                    if (tabelaInvertida[codigo]) {
+                        resultado += tabelaInvertida[codigo];
+                    } else {
+                        resultado += '?';
+                    }
+                }
+                resultado += ' ';
+            }
+
+            document.getElementById('textoSaida').value = resultado.trim();
+        }
+    </script>
+</body>
+</html>
