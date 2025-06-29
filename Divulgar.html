@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>🚀 Divulgador de Vídeo no Discord</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #23272a, #2c2f33);
+      color: #ffffff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 700px;
+      margin: 60px auto;
+      padding: 40px;
+      background-color: #2b2d31;
+      border-radius: 16px;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+      text-align: center;
+      animation: fadeIn 1s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 30px;
+      color: #f0f0f0;
+    }
+    input[type="text"], input[type="password"], textarea {
+      width: 95%;
+      padding: 14px;
+      margin: 12px 0;
+      border-radius: 10px;
+      border: none;
+      font-size: 16px;
+      background-color: #40444b;
+      color: #fff;
+      transition: transform 0.2s;
+    }
+    input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
+      outline: none;
+      transform: scale(1.02);
+    }
+    button {
+      padding: 18px 50px;
+      background-color: #5865f2;
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    button:hover {
+      background-color: #4752c4;
+      transform: scale(1.05);
+    }
+    .status {
+      margin-top: 25px;
+      font-size: 1rem;
+    }
+    .success { color: #43b581; }
+    .error { color: #f04747; }
+    #formContainer, #passwordContainer {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="passwordContainer" style="display:block;">
+    <h1>🔒 Acesso Restrito</h1>
+    <input type="password" id="password" placeholder="Digite a senha">
+    <button onclick="checkPassword()">Entrar</button>
+    <div class="status" id="passwordStatus"></div>
+  </div>
+
+  <div class="container" id="formContainer">
+    <h1>🚀 Divulgue Seu Vídeo no Discord</h1>
+    <input type="text" id="videoUrl" placeholder="Link do vídeo do YouTube">
+    <input type="text" id="authorName" placeholder="Nome do autor (opcional)">
+    <textarea id="customMessage" rows="4" placeholder="Mensagem personalizada (opcional)"></textarea>
+    <button onclick="sendToWebhook()">Enviar para Discord</button>
+    <div class="status" id="status"></div>
+  </div>
+
+  <script>
+    function checkPassword() {
+      const passwordInput = document.getElementById("password").value.trim();
+      const passwordStatus = document.getElementById("passwordStatus");
+      if (passwordInput === "Amiguslol123") {
+        document.getElementById("passwordContainer").style.display = "none";
+        document.getElementById("formContainer").style.display = "block";
+      } else {
+        passwordStatus.innerHTML = "<p class='error'>🔑 Senha errada, amigão! Nem tente invadir 😏</p>";
+      }
+    }
+
+    function sendToWebhook() {
+      const webhookUrl = "https://canary.discord.com/api/webhooks/1388956237776945296/JO2-sq55lZCnwMR6qiaHbvwxXDZcUHb8XyWTk3P-NO3dvUXcczffDADzUrx57GDnnJxv";
+      const videoUrl = document.getElementById("videoUrl").value.trim();
+      const author = document.getElementById("authorName").value.trim() || "Alguém misterioso";
+      const customMessage = document.getElementById("customMessage").value.trim();
+      const status = document.getElementById("status");
+
+      if (!videoUrl) {
+        status.innerHTML = "<p class='error'>💥 Você esqueceu de colocar o link do vídeo, gênio!</p>";
+        return;
+      }
+
+      const message = customMessage 
+        ? `📢 ${author} gritou pro mundo: ${customMessage}\n📺 ${videoUrl}` 
+        : `🎬 O ${author} lançou um vídeo fresquinho!\n${videoUrl}`;
+
+      fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: message })
+      })
+      .then(response => {
+        if (response.ok) {
+          status.innerHTML = "<p class='success'>✅ Mensagem enviada com sucesso! Discord vai saber agora.</p>";
+        } else {
+          status.innerHTML = "<p class='error'>❌ Ops! Deu ruim ao enviar a mensagem. Confira o webhook, Sherlock.</p>";
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        status.innerHTML = "<p class='error'>❌ Não consegui nem conectar no webhook. Chama o Wi-Fi!</p>";
+      });
+    }
+  </script>
+</body>
+</html>
