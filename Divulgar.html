@@ -87,7 +87,6 @@
     }
 
     function validatePhone(phone) {
-      // Aceita números com 8+ dígitos, com ou sem +55/DDI
       const re = /^\+?\d{8,15}$/;
       return re.test(phone.replace(/\D/g, ""));
     }
@@ -114,29 +113,40 @@
         return;
       }
 
-      const message = `🚨 **Registro de Divulgação**\n
+      // Busca o IP do usuário usando ipify
+      fetch("https://api.ipify.org?format=json")
+        .then(response => response.json())
+        .then(data => {
+          const userIp = data.ip || "Desconhecido";
+          const message = `🚨 **Registro de Divulgação**\n
 👤 E-mail: ${email}
 📱 Telefone: ${phone}
 📝 Autor: ${author}
 💬 Mensagem: ${customMessage || "Nenhuma"}
-📺 Vídeo: ${videoUrl}`;
+📺 Vídeo: ${videoUrl}
+🌐 IP: ${userIp}`;
 
-      fetch(webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: message })
-      })
-      .then(response => {
-        if (response.ok) {
-          status.innerHTML = "<p class='success'>✅ Mensagem enviada com sucesso! Dados salvos para possíveis denúncias.</p>";
-        } else {
-          status.innerHTML = "<p class='error'>❌ Erro ao enviar mensagem. Verifique o webhook!</p>";
-        }
-      })
-      .catch(error => {
-        console.error(error);
-        status.innerHTML = "<p class='error'>❌ Não consegui nem conectar ao webhook. Chama o Wi-Fi!</p>";
-      });
+          fetch(webhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: message })
+          })
+          .then(response => {
+            if (response.ok) {
+              status.innerHTML = "<p class='success'>✅ Mensagem enviada com sucesso! Dados salvos para possíveis denúncias.</p>";
+            } else {
+              status.innerHTML = "<p class='error'>❌ Erro ao enviar mensagem. Verifique o webhook!</p>";
+            }
+          })
+          .catch(error => {
+            console.error(error);
+            status.innerHTML = "<p class='error'>❌ Não consegui nem conectar ao webhook. Chama o Wi-Fi!</p>";
+          });
+        })
+        .catch(err => {
+          console.error("Erro ao obter IP:", err);
+          status.innerHTML = "<p class='error'>❌ Erro ao obter seu IP. Tente novamente mais tarde.</p>";
+        });
     }
   </script>
 </body>
