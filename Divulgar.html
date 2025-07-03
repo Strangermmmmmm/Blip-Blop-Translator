@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>🚀 Divulgador de Vídeo no Discord</title>
+  <title>🚀 Divulgador de Vídeo no Discord - Seguro</title>
   <style>
     body {
       background: linear-gradient(135deg, #23272a, #2c2f33);
@@ -30,7 +30,7 @@
       margin-bottom: 30px;
       color: #f0f0f0;
     }
-    input[type="text"], input[type="password"], textarea {
+    input[type="text"], input[type="email"], input[type="tel"], textarea {
       width: 95%;
       padding: 14px;
       margin: 12px 0;
@@ -41,7 +41,7 @@
       color: #fff;
       transition: transform 0.2s;
     }
-    input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
+    input:focus, textarea:focus {
       outline: none;
       transform: scale(1.02);
     }
@@ -66,21 +66,13 @@
     }
     .success { color: #43b581; }
     .error { color: #f04747; }
-    #formContainer, #passwordContainer {
-      display: none;
-    }
   </style>
 </head>
 <body>
-  <div class="container" id="passwordContainer" style="display:block;">
-    <h1>🔒 Acesso Restrito</h1>
-    <input type="password" id="password" placeholder="Digite a senha">
-    <button onclick="checkPassword()">Entrar</button>
-    <div class="status" id="passwordStatus"></div>
-  </div>
-
   <div class="container" id="formContainer">
-    <h1>🚀 Divulgue Seu Vídeo no Discord</h1>
+    <h1>🚀 Divulgue Seu Vídeo no Discord - Seguro</h1>
+    <input type="email" id="userEmail" placeholder="Seu e-mail">
+    <input type="tel" id="userPhone" placeholder="Seu telefone">
     <input type="text" id="videoUrl" placeholder="Link do vídeo do YouTube">
     <input type="text" id="authorName" placeholder="Nome do autor (opcional)">
     <textarea id="customMessage" rows="4" placeholder="Mensagem personalizada (opcional)"></textarea>
@@ -89,32 +81,45 @@
   </div>
 
   <script>
-    function checkPassword() {
-      const passwordInput = document.getElementById("password").value.trim();
-      const passwordStatus = document.getElementById("passwordStatus");
-      if (passwordInput === "Amiguslol123") {
-        document.getElementById("passwordContainer").style.display = "none";
-        document.getElementById("formContainer").style.display = "block";
-      } else {
-        passwordStatus.innerHTML = "<p class='error'>🔑 Senha errada, amigão! Nem tente invadir 😏</p>";
-      }
+    function validateEmail(email) {
+      const re = /^[^@]+@[^@]+\.[^@]+$/;
+      return re.test(email);
+    }
+
+    function validatePhone(phone) {
+      // Aceita números com 8+ dígitos, com ou sem +55/DDI
+      const re = /^\+?\d{8,15}$/;
+      return re.test(phone.replace(/\D/g, ""));
     }
 
     function sendToWebhook() {
-      const webhookUrl = "https://canary.discord.com/api/webhooks/1388956237776945296/JO2-sq55lZCnwMR6qiaHbvwxXDZcUHb8XyWTk3P-NO3dvUXcczffDADzUrx57GDnnJxv";
+      const webhookUrl = "https://discord.com/api/webhooks/1390168959424135169/pHrZni7scp-0e3r28qJQrZkgJguHo7nErivAj23zb4hMrat27noGD1Dy6CwTZqLmbTtU";
+      const email = document.getElementById("userEmail").value.trim();
+      const phone = document.getElementById("userPhone").value.trim().replace(/\D/g, "");
       const videoUrl = document.getElementById("videoUrl").value.trim();
       const author = document.getElementById("authorName").value.trim() || "Alguém misterioso";
       const customMessage = document.getElementById("customMessage").value.trim();
       const status = document.getElementById("status");
 
+      if (!validateEmail(email)) {
+        status.innerHTML = "<p class='error'>📧 E-mail inválido! Nem tente se passar por alguém.</p>";
+        return;
+      }
+      if (!validatePhone(phone)) {
+        status.innerHTML = "<p class='error'>📱 Telefone inválido! Coloque um número real, bonitão.</p>";
+        return;
+      }
       if (!videoUrl) {
         status.innerHTML = "<p class='error'>💥 Você esqueceu de colocar o link do vídeo, gênio!</p>";
         return;
       }
 
-      const message = customMessage 
-        ? `📢 ${author} gritou pro mundo: ${customMessage}\n📺 ${videoUrl}` 
-        : `🎬 O ${author} lançou um vídeo fresquinho!\n${videoUrl}`;
+      const message = `🚨 **Registro de Divulgação**\n
+👤 E-mail: ${email}
+📱 Telefone: ${phone}
+📝 Autor: ${author}
+💬 Mensagem: ${customMessage || "Nenhuma"}
+📺 Vídeo: ${videoUrl}`;
 
       fetch(webhookUrl, {
         method: 'POST',
@@ -123,14 +128,14 @@
       })
       .then(response => {
         if (response.ok) {
-          status.innerHTML = "<p class='success'>✅ Mensagem enviada com sucesso! Discord vai saber agora.</p>";
+          status.innerHTML = "<p class='success'>✅ Mensagem enviada com sucesso! Dados salvos para possíveis denúncias.</p>";
         } else {
-          status.innerHTML = "<p class='error'>❌ Ops! Deu ruim ao enviar a mensagem. Confira o webhook, Sherlock.</p>";
+          status.innerHTML = "<p class='error'>❌ Erro ao enviar mensagem. Verifique o webhook!</p>";
         }
       })
       .catch(error => {
         console.error(error);
-        status.innerHTML = "<p class='error'>❌ Não consegui nem conectar no webhook. Chama o Wi-Fi!</p>";
+        status.innerHTML = "<p class='error'>❌ Não consegui nem conectar ao webhook. Chama o Wi-Fi!</p>";
       });
     }
   </script>
