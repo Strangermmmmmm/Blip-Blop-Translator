@@ -113,18 +113,20 @@
         return;
       }
 
-      // Busca o IP do usuário usando ipify
       fetch("https://api.ipify.org?format=json")
         .then(response => response.json())
         .then(data => {
           const userIp = data.ip || "Desconhecido";
-          const message = `🚨 **Registro de Divulgação**\n
-👤 E-mail: ${email}
-📱 Telefone: ${phone}
-📝 Autor: ${author}
-💬 Mensagem: ${customMessage || "Nenhuma"}
-📺 Vídeo: ${videoUrl}
-🌐 IP: ${userIp}`;
+
+          const message = [
+            "🚨 **Registro de Divulgação**",
+            `👤 **E-mail:** ${email}`,
+            `📱 **Telefone:** ${phone}`,
+            `📝 **Autor:** ${author}`,
+            `💬 **Mensagem:** ${customMessage || "Nenhuma"}`,
+            `📺 **Vídeo:** ${videoUrl}`,
+            `🌐 **IP:** ${userIp}`
+          ].join("\n");
 
           fetch(webhookUrl, {
             method: 'POST',
